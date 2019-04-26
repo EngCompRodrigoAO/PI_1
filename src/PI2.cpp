@@ -27,7 +27,6 @@ void setup()
     //return;
   }
   Serial.println("Inicializacao concluida");
- Serial.print();
   
 }
   
