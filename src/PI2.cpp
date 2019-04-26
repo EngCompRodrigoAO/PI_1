@@ -12,19 +12,23 @@ int y;
 int tempo;
 File meuArquivo;
 
-
+void conta() // contatdor de pulso da interrupção
+{
+  RPM++; // incrementa um a cada vez que a interupçãofor ativa
+}
 
 void setup()
 {
-  RPM=0;
-  tempo=0;
+  RPM=0; //zera a variavel rpm
+  //tempo=0; variavel não usado
   pinMode(cs_pin, OUTPUT);
   Serial.begin(9600);
+  attachInterrupt(digitalPinToInterrupt(conttemp), conta, FALLING);//borda de decida conttemp é o pino 3
   Serial.println("Inicializando cartao SD...");  
  if (!SD.begin(cs_pin)) 
   {
     Serial.println("Falha na Inicializacao!");
-    //return;
+    //return; // desabilitado retorno do SD card se não abrir cartão
   }
   Serial.println("Inicializacao concluida");
   
@@ -34,10 +38,10 @@ void setup()
 
 void grava() // grava os dados do rpm no cartão sd
 {  
-                                if (meuArquivo=SD.open("Rpm.txt",FILE_WRITE)) 
+                                if (meuArquivo=SD.open("Rpm.txt",FILE_WRITE)) // abri arquivo RPM.txt sempre no fim de linha
                                 {          
-                                meuArquivo.println(RPM);
-                                meuArquivo.close();
+                                meuArquivo.println(RPM); // grava no arquivo em cartão 
+                                meuArquivo.close(); // fecha arquivode gravação
                                 }      
 }
 
@@ -65,26 +69,16 @@ void grava() // grava os dados do rpm no cartão sd
  }  
 */
  //___________________________________________
-void conta() // contatdor de pulso da interrupção
-{
-  RPM++;
-}
+
 
 
 void loop()  // programa principal
 { 
   RPM=0;  
-  //attachInterrupt(0,conttemp,FALLING); // borda de decida conttemp é o pino 3
-  attachInterrupt(digitalPinToInterrupt(conttemp), conta, FALLING);
-
   delay(5000);
-  detachInterrupt(digitalPinToInterrupt(conttemp));
-  //detachInterrupt(0); // desliga a interrupção;
-  
+  //detachInterrupt(digitalPinToInterrupt(conttemp));  // desliga a interrupção
   RPM= RPM*12;
-  delay(10);
   Serial.print(RPM);
-  delay(10);
   Serial.println(" RPM");
   grava(); 
 }
